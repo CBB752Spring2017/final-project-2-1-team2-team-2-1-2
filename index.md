@@ -32,17 +32,20 @@ The sheer size of the human genome often means that the gRNA target sequence is 
 
 As shown in orange in the figure above, the protospacer adjacent motif, or PAM site, is a 3 base pair sequence expected to bind the 3’ end of the designed gRNA. It has been shown to be absolutely required in the genome to target Cas9, as it is at the 5’ end of the PAM site that Cas9 introduces a double stranded break into the DNA. About 50% of the time in humans, the PAM sequence is the GGG motif, though NGG is also seen (2).  Depending on the origin species of the Cas9 employed, different PAM motifs can be probed. 
 
-*gRNA: PAM Proximal versus PAM Distal*
+*gRNA & PAM Proximal versus PAM Distal*
 
-The gRNA consists of two main elements: a scaffolding piece to bind Cas9 and a target piece complementary to a region in the genome. The designed gRNA is often about 20 nucleotides long. While intuition suggests that longer sequences may confer higher specificity, this was proven wrong (1). Free single stranded RNA is highly unstable, and it is thought that Cas9 protects only about 20 nucleotides from degradation. 
+The gRNA consists of two main elements: a scaffolding piece to bind Cas9 and a target piece complementary to a region in the genome. The designed gRNA is often about 20 nucleotides long. While intuition suggests that longer sequences may confer higher specificity, this was proven wrong (1). Free single stranded RNA is highly unstable, and it is thought that Cas9 protects only about 20 nucleotides from degradation.
 
 The PAM proximal region of gRNA is that which is closest to the PAM site while the PAM distal gRNA region is farther from the site. In a genome-wide ChIP-seq experiment using 12 gRNAs to characterize their off-target binding preferences, near-perfect homology of gRNA to DNA was observed at the PAM-proximal region (2). On the other hand, the PAM distal region had up to 10 mismatches with the genomic DNA (2). The PAM proximal region is referred to as the seed sequence to ensure gRNA specificity. The exact number of bases for this region is heavily debated but ranges between 1-12 nucleotides (1)(2)(3). 
+
+While the target sequence is very important, some studies have shown that the scaffolding piece of the gRNA is also critical. Both lengthening and shortening the 3' end of the gRNA was shown to reduce gRNA expression (1). Still another group showed that lengthening the hairpin region tethering the gRNA to Cas9 can improve stability and target specificity of the complex (1). 
 
 The gRNA is the most important determinant of Cas9 specificity. The exact mechanism by which gRNA confers this specificity is not well understood. Some potential mechanisms include changing “the thermodynamic stability of the gRNA:DNA duplex,” the effective concentration of Cas9-gRNA (higher = less specific), the blocking of other Cas9 sites for trans-acting binding proteins, and the conformation of Cas9 to better access chromatin (1). 
 
 *Chromatin Structure and Methylation:*
 
 DNA exists as tightly compacted coils around histone proteins in human cells, and this results in bulky, complex structures that can sometimes impede protein-DNA interaction. Thus, gRNA binding is heavily biased towards binding more accessible regions of the genome. One study showed that over 50% of gRNA binding is in open chromatin regions (2). Less accessible chromatin regions also correspond to higher CpG methylation. The presence of these marks has been suggested to block Cas9 binding (1)(3).
+
 *Cas9 related factors:*
 
 Because of the fast action of Cas9 and rapid degradation, the addition of purified Cas9 is reported to help reduce off-target effects (3). Furthermore, Cas9 can be modified into a nickase, such that it only cuts one DNA strand and a pair of gRNAs and nickases can be used for greater stringency in mutation (4).
@@ -51,7 +54,16 @@ Because of the fast action of Cas9 and rapid degradation, the addition of purifi
 #### The Inputs Required for Off-Target-Effect analysis of gRNAs
 For off-target analysis, most tools simply require the gRNA sequence and a genome to search. gRNA specific parameters can either be inputs or set by the program such as tolerated mismatches, length, etc. Some tools also allow the specification of PAM site based on the Cas9 ortholog used. More advanced tools allow for the inclusion of ENCODE data, specifying chromatin structure across the genome to account for this as well.
 
-#### Comparison of De novo tool and Other Prediction tools such as: (Daniels)
+#### Comparison of *De novo* tool and Other Prediction tools such as: CRISPR Seek and Cas OFFinder
+The *de novo* tool developed by Jay accounts for many of the same factors as other publicly available off-target binding prediction tools. Through the Hamming Distance parameter, the number of tolerated mismatched bases can be specified. The increased importance of the PAM proxmial region of the gRNA is also taken into account when searching for homologous genome regions through the Minkowski seed region weighting. While currently hard-coded, the length and sequence of the PAM site can be user defined, as well as the length of the gRNA. 
+
+From my research, it appears that Jay's tool shows more promise than Cas OFFfinder which Daniel used on a separate genome to test the tool's ability to predict off-target binding sites. CasOFFinder only looks for PAM sequences and gRNA mismatches to PAM regions (5). There is no incorporation of PAM-proximal preference. One of the advantages of CasOFFinder is lower memory usage because it divides the genome into smaller chunks for searching and comparing (5).
+
+CRISPR Seek does allow more user manipulation of the running parameters. Similar to defining the PAM-proximal regions as more important, CRISPR Seek allows the user to specify which nucleotides in the gRNA must be totally homologous to the genome (6). Furthermore, CRISPR Seek is compatible with Cas9 nickase experiments with 2 gRNAs and allows for optimization of such a system (6). However, when it comes time to pick off-target sites, again only mismatch number and PAM sequence parameters are used (6).
+
+It is very difficult to include the full range of information discussed above into any one algorithm as it is always changing, and not true for all gRNAs. The next steps for Jay's algorithm include the incorporation of ENCODE ChIP-seq data for chromatin structure. 
+
+
 
 
 
