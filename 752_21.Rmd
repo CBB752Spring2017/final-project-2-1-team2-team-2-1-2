@@ -1,0 +1,115 @@
+---
+title: "752_21"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## CBB752 Project 2.1 Pipelining
+
+Here we examine the results of two CRISPR off-target prediction tools, CRISPR-Seek (Zhu et al 2014)
+and Cas OFFinder (Bae et al 2014). These methods were compared in Haeussler et al (2016). CRISPR Seek 
+utilizes an empirically derived substitution matrix to score the likelihood that sites will be cleaved
+by the Cas9 nuclease given similarity to the guide (with the substitution matrix quantifying mismatch 
+penalties). Cas OFFinder searches the genome for patterns indicative of PAM sites, and scores putative
+sites based on base mismatches against the guide query. The following analysis compares the performance 
+of these methods against the human reference genome (build 38), and compare against the benchmarking 
+results from Haussler et al (2016). 
+
+```{r libraries}
+# load libraries
+library(tidyr)
+library(dplyr)
+library(reshape2)
+library(CRISPRseek)
+
+library(BSgenome.Hsapiens.UCSC.hg19)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(org.Hs.eg.db)
+```
+
+We began by pulling 31 guide RNAs and 650 experimentally validated off target sites from the supplemental data
+of Haussler et al (2016). The guides were then be fed into CRISPR-Seek and CasOFFinder to generate
+predicted off target sites. These predictions were compared against the validated set to assess each
+method's performance.
+```{r}
+# LOAD IN THE GUIDE RNAS AND VALIDATED OFF TARGET SITES FROM THE PAPER
+df <- read.table('13059_2016_1012_MOESM2_ESM.tsv', sep='\t', header=TRUE, stringsAsFactors = FALSE)
+# there are 31 unique guide RNAs
+# length(unique(df$guideSeq))
+
+# 650 unique off targets
+# length(unique(df$otSeq))
+
+# extract guides and off target sequences
+guides <- unlist(substr(unique(df$guideSeq),1,20))
+offTarget <- unique(df[,c('guideSeq','otSeq')])
+
+# write guide RNAs to file for usage in off target tools
+seqNames <- 1:length(guides)
+seqNames <- paste0('>', seqNames)
+outFile <- paste(seqNames, guides, '', sep='\n')
+write(outFile, '~/Desktop/gRNA.fasta')
+```
+
+Here we see that CRISPR-Seek predicts 496 sequences which are present in the validated dataset. Checking
+for the reverse compliment of CRISPR-Seek prediction increases this number to 516. 
+## CRISPR-Seek
+```{r CRISPR-Seek}
+# GENERATE LIST OF OFF TARGET SITES FROM CRISPRSEEK
+# results <- offTargetAnalysis(inputFilePath = '~/Desktop/gRNA.fasta', findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE, findgRNAs = FALSE, BSgenomeName = Hsapiens, txdb = TxDb.Hsapiens.UCSC.hg38.knownGene, orgAnn = org.Hs.egSYMBOL, max.mismatch = 4, outputDir = '~/Desktop/', overwrite = TRUE)
+
+# READ IN RESULTS FROM CRISPRSEEK
+CRISPRSEEK <- read.table('OfftargetAnalysis.xls', sep='\t', header=TRUE, stringsAsFactors = FALSE)
+list1 <- CRISPRSEEK[,c('OffTargetSequence')]
+Rlist1 <- DNAStringSet(list1)
+Rlist1 <- Biostrings::reverseComplement(Rlist1)
+Rlist1 <- unlist(lapply(Rlist1,toString))
+
+# Check the number of off targets predicted by CRISPR Seek that are in the validated dataset
+
+sum(list1 %in% offTarget$otSeq)
+sum(list1 %in% offTarget$otSeq) + sum(Rlist1 %in% offTarget$otSeq)
+```
+
+CasOFFinder predicts 461 of the 650 validated off target sites. 
+## CasOFFinder
+```{r CasOFFinder}
+# GENERATE LIST USING CASOFFINDER (www.rgenome.net/cas-offinder)
+# this was done using their online tool because R integration is not supported
+
+# READ IN CAS-OFFINDER results
+CASOFF <- read.table('result.txt', sep='\t', header=FALSE)
+CASOFF_offtargets <- toupper(CASOFF[,3])
+RCASOFF_offtargets <- DNAStringSet(CASOFF_offtargets)
+RCASOFF_offtargets <- Biostrings::reverseComplement(RCASOFF_offtargets)
+RCASOFF_offtargets <- unlist(lapply(RCASOFF_offtargets,toString))
+
+# Check the number of off targets predicted by CAS-OFFinder that are in the validated dataset
+length(intersect(CASOFF_offtargets,offTarget$otSeq))
+length(intersect(RCASOFF_offtargets,offTarget$otSeq))+ length(intersect(CASOFF_offtargets,offTarget$otSeq))
+```
+
+## Comparison against published analyses
+The authors of the multi-tool analysis report that CasOFFinder finds all validated off target
+sites. Though we ran the tool with the same tolerance of up to 4 mismatches, we did not recover
+all validated sites. This may be because we ran our prediction against one version of the genome,
+while the curated list of validated off-target sites come from numerous genome versions across
+several studies. CRISPR-Seek does slightly better with a total of 516 identified sites, but likely 
+suffers from the same limitation (though the authors do not explicitly test the performance
+of this tool)
+```{r plots, echo=FALSE}
+x <- c('CRISPR-Seek','CasOFFinder')
+y <- c(516,461)/650
+names(y) <- x
+barplot(y, ylab='Fraction of Validated Off Target Sites Identified', xlab='Prediction Algorithm', main='Method Comparison')
+```
+
+
+## Citations
+1.Zhu, L. J., Holmes, B. R., Aronin, N. & Brodsky, M. H. CRISPRseek: A Bioconductor Package to Identify Target-Specific Guide RNAs for CRISPR-Cas9 Genome-Editing Systems. PLoS One 9, (2014).
+2.Bae, S., Park, J. & Kim, J.-S. Cas-OFFinder: a fast and versatile algorithm that searches for potential off-target sites of Cas9 RNA-guided endonucleases. Bioinformatics 30, 1473–1475 (2014).
+3.Haeussler, M. et al. Evaluation of off-target and on-target scoring algorithms and integration into the guide RNA selection tool CRISPOR. Genome Biol. 17, 148 (2016).
+
