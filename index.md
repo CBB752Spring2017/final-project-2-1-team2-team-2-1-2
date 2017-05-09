@@ -55,13 +55,13 @@ Because of the fast action of Cas9 and rapid degradation, the addition of purifi
 For off-target analysis, most tools simply require the gRNA sequence and a genome to search. gRNA specific parameters can either be inputs or set by the program such as tolerated mismatches, length, etc. Some tools also allow the specification of PAM site based on the Cas9 ortholog used. More advanced tools allow for the inclusion of ENCODE data, specifying chromatin structure across the genome to account for this as well.
 
 #### Comparison of *De novo* tool and Other Prediction tools such as: CRISPR Seek and Cas OFFinder
-The *de novo* tool developed by Jay accounts for many of the same factors as other publicly available off-target binding prediction tools. Through the Hamming Distance parameter, the number of tolerated mismatched bases can be specified. The increased importance of the PAM proxmial region of the gRNA is also taken into account when searching for homologous genome regions through the Minkowski seed region weighting. While currently hard-coded, the length and sequence of the PAM site can be user defined, as well as the length of the gRNA. 
+For more detailed information about Jay's tool and other prediction tools, see the Coding and Pipeline sections. 
 
 From my research, it appears that Jay's tool shows more promise than Cas OFFfinder which Daniel used on a separate genome to test the tool's ability to predict off-target binding sites. CasOFFinder only looks for PAM sequences and gRNA mismatches to PAM regions (5). There is no incorporation of PAM-proximal preference. One of the advantages of CasOFFinder is lower memory usage because it divides the genome into smaller chunks for searching and comparing (5).
 
 CRISPR Seek does allow more user manipulation of the running parameters. Similar to defining the PAM-proximal regions as more important, CRISPR Seek allows the user to specify which nucleotides in the gRNA must be totally homologous to the genome (6). Furthermore, CRISPR Seek is compatible with Cas9 nickase experiments with 2 gRNAs and allows for optimization of such a system (6). However, when it comes time to pick off-target sites, again only mismatch number and PAM sequence parameters are used (6).
 
-It is very difficult to include the full range of information discussed above into any one algorithm as it is always changing, and not true for all gRNAs. The next steps for Jay's algorithm include the incorporation of ENCODE ChIP-seq data for chromatin structure. 
+It is very difficult to include the full range of information discussed above into any one algorithm as it is always changing, and not true for all gRNAs. The next steps for Jay's algorithm include the incorporation of ENCODE ChIP-seq data for chromatin structure, the weighted search of PAM sites accounting for their natural frequency, and Cas9 nickase experiment compatibility. 
 
 
 
@@ -73,6 +73,8 @@ It is very difficult to include the full range of information discussed above in
 #### Documentation: *De novo* Off-Target Mutation Prediction Tool for SubjectZ
 The following is a basic overview of Jay's code.
 ![alt text](https://github.com/CBB752Spring2017/final-project-2-1-team2-team-2-1-2/blob/master/jayalgorithm.png)
+
+The *de novo* tool developed by Jay accounts for many of the same factors as other publicly available off-target binding prediction tools. Through the Hamming Distance parameter, the number of tolerated mismatched bases can be specified. The chosen value was 7. The increased importance of the PAM proxmial region of the gRNA is also taken into account when searching for homologous genome regions through the Minkowski seed region weighting. While all currently hard-coded, the length (3 nucleotides) and sequence of the PAM site (NGG) can be user defined, as well as the length of the gRNA (20 nucleotides).
 #### Results:
 
 
