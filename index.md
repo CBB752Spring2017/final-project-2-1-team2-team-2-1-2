@@ -20,9 +20,9 @@ Table of Contents
  -Pipeline: Daniel
 
 ### Introduction: CRISPR/Cas in the Context of Genome Editing
-Since the discovery of its versatile genome editing function in 2013, the CRISPR/Cas system has been heavily studied for its use in targeted genome modification in eukaryotic cells. In many current applications, the Cas9 endonuclease from Streptococcus pyogenes is directed by a synthetic single stranded guide RNA (gRNA) containing homology to a genomic region. The gRNA displaces the duplex DNA and forms its own RNA:DNA duplex with one of the DNA strands. Cas9 then cleaves both strands of the DNA, inducing native DNA repair pathways. At this point, if a retinue of mutations at the site is the end goal, non-homologous end joining occurs with indels. However, if a specific point mutation or sequence insert is the goal, the addition of excess double stranded DNA of interest will result in a small population of recombinants with the change after Cas9 action.
+Since the discovery of its versatile genome editing function in 2013, the CRISPR/Cas system has been heavily studied for its use in targeted genome modification in eukaryotic cells. In many current applications, the Cas9 endonuclease from *Streptococcus pyogenes* is directed by a synthetic single stranded guide RNA (gRNA) containing homology to a genomic region. The gRNA displaces the duplex DNA and forms its own RNA:DNA duplex with one of the DNA strands. Cas9 then cleaves both strands of the DNA, inducing native DNA repair pathways. At this point, if random mutations at the site is the end goal, non-homologous end joining occurs with indels. However, if a specific point mutation or sequence insert is the goal, the addition of a double stranded DNA of interest will result in a small population of recombinants with the change after Cas9 action.
 ![alt text](https://github.com/CBB752Spring2017/final-project-2-1-team2-team-2-1-2/blob/master/crisprcas.png) 
-
+image from addgene.org
 ### Writing:
 
 #### Off-Target Effects and “Determinants of CRISPR/Cas sgRNA Specificity” (1)
@@ -30,7 +30,7 @@ The sheer size of the human genome often means that the gRNA target sequence is 
 
 *PAM site:*
 
-As shown in orange in the figure above, the protospacer adjacent motif, or PAM site, is a 3 base pair sequence expected to bind the 3’ end of the designed gRNA. It has been shown to be absolutely required in the genome to target Cas9, as it is at the 5’ end of the PAM site that Cas9 introduces a double stranded break into the DNA. About 50% of the time in humans, the PAM sequence is the GGG motif, though NGG is also seen (2).  Depending on the origin species of the Cas9 employed, different PAM motifs can be probed. 
+As shown in orange in the figure above, the protospacer adjacent motif, or PAM site, is a 3 base pair sequence expected to bind the 3’ end of the designed gRNA. It has been shown to be absolutely required in the genome to target Cas9, as it is at the 5’ end of the PAM site that Cas9 introduces a double stranded break into the DNA. About 50% of the time in humans, the PAM sequence is the GGG motif, though NGG is also seen (2). Depending on the origin species of the Cas9 employed, different PAM motifs can be probed. 
 
 *gRNA & PAM Proximal versus PAM Distal*
 
@@ -38,21 +38,21 @@ The gRNA consists of two main elements: a scaffolding piece to bind Cas9 and a t
 
 The PAM proximal region of gRNA is that which is closest to the PAM site while the PAM distal gRNA region is farther from the site. In a genome-wide ChIP-seq experiment using 12 gRNAs to characterize their off-target binding preferences, near-perfect homology of gRNA to DNA was observed at the PAM-proximal region (2). On the other hand, the PAM distal region had up to 10 mismatches with the genomic DNA (2). The PAM proximal region is referred to as the seed sequence to ensure gRNA specificity. The exact number of bases for this region is heavily debated but ranges between 1-12 nucleotides (1)(2)(3). 
 
-While the target sequence is very important, some studies have shown that the scaffolding piece of the gRNA is also critical. Both lengthening and shortening the 3' end of the gRNA was shown to reduce gRNA expression (1). Still another group showed that lengthening the hairpin region tethering the gRNA to Cas9 can improve stability and target specificity of the complex (1). 
+While the target sequence is very important, some studies have shown that the scaffolding piece of the gRNA is also critical. Both lengthening and shortening the 3' end of the gRNA were shown to reduce gRNA expression (1). Still another group showed that lengthening the hairpin region tethering the gRNA to Cas9 can improve stability and target specificity of the complex (1). 
 
 The gRNA is the most important determinant of Cas9 specificity. The exact mechanism by which gRNA confers this specificity is not well understood. Some potential mechanisms include changing “the thermodynamic stability of the gRNA:DNA duplex,” the effective concentration of Cas9-gRNA (higher = less specific), the blocking of other Cas9 sites for trans-acting binding proteins, and the conformation of Cas9 to better access chromatin (1). 
 
 *Chromatin Structure and Methylation:*
 
-DNA exists as tightly compacted coils around histone proteins in human cells, and this results in bulky, complex structures that can sometimes impede protein-DNA interaction. Thus, gRNA binding is heavily biased towards binding more accessible regions of the genome. One study showed that over 50% of gRNA binding is in open chromatin regions (2). Less accessible chromatin regions also correspond to higher CpG methylation. The presence of these marks has been suggested to block Cas9 binding (1)(3).
+DNA exists as tightly compacted coils around histone proteins in human cells, and this results in bulky, complex structures that can sometimes impede protein-DNA interactions. Thus, gRNA binding is heavily biased towards binding more accessible regions of the genome. One study showed that over 50% of gRNA binding is in open chromatin regions (2). Less accessible chromatin regions also correspond to higher epigenetic activity, namely CpG methylation. The presence of these marks has been suggested to block Cas9 binding (1)(3).
 
 *Cas9 related factors:*
 
-Because of the fast action of Cas9 and rapid degradation, the addition of purified Cas9 is reported to help reduce off-target effects (3). Furthermore, Cas9 can be modified into a nickase, such that it only cuts one DNA strand and a pair of gRNAs and nickases can be used for greater stringency in mutation (4).
+Because of the fast action of Cas9 and rapid degradation, the addition of purified Cas9 is reported to help reduce off-target effects (3). Furthermore, Cas9 can be modified into a nickase, such that it only cuts one DNA strand and a pair of gRNAs and nickases can be used for greater stringency (4).
 
 
 #### The Inputs Required for Off-Target-Effect analysis of gRNAs
-For off-target analysis, most tools simply require the gRNA sequence and a genome to search. gRNA specific parameters can either be inputs or set by the program such as tolerated mismatches, length, etc. Some tools also allow the specification of PAM site based on the Cas9 ortholog used. More advanced tools allow for the inclusion of ENCODE data, specifying chromatin structure across the genome to account for this as well.
+For off-target analysis, most tools simply require the gRNA sequence and a genome to search. gRNA specific parameters can either be inputs or set by the program such as tolerated mismatches, gRNA length, specific genome region, etc. Some tools also allow the specification of PAM site based on the Cas9 ortholog used. More advanced tools allow for the inclusion of ENCODE data, specifying chromatin structure across the genome to account for this as well.
 
 #### Comparison of *De novo* tool and Other Prediction tools such as: CRISPR Seek and Cas OFFinder
 For more detailed information about Jay's tool and other prediction tools, see the Coding and Pipeline sections. 
@@ -61,7 +61,7 @@ From my research, it appears that Jay's tool shows more promise than Cas OFFfind
 
 CRISPR Seek does allow more user manipulation of the running parameters. Similar to defining the PAM-proximal regions as more important, CRISPR Seek allows the user to specify which nucleotides in the gRNA must be totally homologous to the genome (6). Furthermore, CRISPR Seek is compatible with Cas9 nickase experiments with 2 gRNAs and allows for optimization of such a system (6). However, when it comes time to pick off-target sites, again only mismatch number and PAM sequence parameters are used (6).
 
-It is very difficult to include the full range of information discussed above into any one algorithm as it is always changing, and not true for all gRNAs. The next steps for Jay's algorithm include the incorporation of ENCODE ChIP-seq data for chromatin structure, the weighted search of PAM sites accounting for their natural frequency, and Cas9 nickase experiment compatibility. 
+It is very difficult to include the full range of information discussed above into any one algorithm as what we know about the CRISPR/Cas9 system is always changing, and often does not hold true for all gRNAs. The next steps for Jay's algorithm include the incorporation of ENCODE ChIP-seq data for chromatin structure, the weighted search of PAM sites accounting for their natural frequency, and Cas9 nickase experiment compatibility. 
 
 #### References:
 
