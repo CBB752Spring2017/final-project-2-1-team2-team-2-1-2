@@ -65,6 +65,13 @@ It is very difficult to include the full range of information discussed above in
 
 #### References:
 
+1. Wu, Xuebing, Andrea J. Kriz, and Phillip A. Sharp. "Target specificity of the CRISPR-Cas9 system." Quantitative Biology 2.2 (2014): 59-70. Web.
+2. Kuscu, Cem, Sevki Arslan, Ritambhara Singh, Jeremy Thorpe, and Mazhar Adli. "Genome-wide analysis reveals characteristics of off-target sites bound by the Cas9 endonuclease." Nature Biotechnology32.7 (2014): 677-83. Web.
+3. Zhang, Xiao-Hui, Louis Y. Tee, Xiao-Gang Wang, Qun-Shan Huang, and Shi-Hua Yang. "Off-target Effects in CRISPR/Cas9-mediated Genome Engineering." Molecular Therapy - Nucleic Acids 4 (2015): n. pag. Web.
+4. "CRISPR/Cas9 Guide." Addgene. N.p., n.d. Web. 09 May 2017.
+5. Bae, S., J. Park, and J.-S. Kim. "Cas-OFFinder: a fast and versatile algorithm that searches for potential off-target sites of Cas9 RNA-guided endonucleases." Bioinformatics 30.10 (2014): 1473-475. Web.
+6. Zhu, Lihua J., Benjamin R. Holmes, Neil Aronin, and Michael H. Brodsky. "CRISPRseek: A Bioconductor Package to Identify Target-Specific Guide RNAs for CRISPR-Cas9 Genome-Editing Systems." PLoS ONE 9.9 (2014): n. pag. Web.
+
 
 
 ### Coding:
