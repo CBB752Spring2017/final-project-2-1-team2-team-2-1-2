@@ -63,7 +63,7 @@ CRISPR Seek does allow more user manipulation of the running parameters. Similar
 
 It is very difficult to include the full range of information discussed above into any one algorithm as it is always changing, and not true for all gRNAs. The next steps for Jay's algorithm include the incorporation of ENCODE ChIP-seq data for chromatin structure, the weighted search of PAM sites accounting for their natural frequency, and Cas9 nickase experiment compatibility. 
 
-
+#### References:
 
 
 
