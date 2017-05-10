@@ -78,12 +78,39 @@ It is very difficult to include the full range of information discussed above in
 
 
 #### Documentation: *De novo* Off-Target Mutation Prediction Tool for SubjectZ
-The following is a basic overview of Jay's code.
+
+##### MAGE: Markov Affinity GRNA Extraction
+Amongst the literature concerning CRISPR/Cas off-targeting, few unifying themes have emerged: 
+1) CRISPR off targetting is primarily a function of sequence homology. 
+- Traditional alignment methods do not adequately predict the probability of offtargetting.  
+   - Given a set of roughly similar 20-mers (as might be extracted from a naive search for off targets), alignments will not produce adequate dynamic range to quantify their differences.
+ - Similarly, more blunt statistics such as Hamming distances yield many false positives, as they are far too sensitive.
+2) The degree of sequence homology required for binding varies based on proximity to the PAM sequence
+From these insights, we assert that a new sequence similarity score is necessary to adequately measure guideRNA offtarget probabilities.  Kernel methods lend themselves well as a tool to generate such similarities. 
+
+First, in order to generate a vector space to operate on, and to facilitate useage of kernels that are agnostic to the feature space, we map extracted possible off targets into a 500 dimensional space using DNA2Vec, a semantic similarity neural network inspired by Word2Vec. MAGE then uses an alpha-decaying kernel to map sequences into a similarity space. 
+
+The mapping of distances within the alpha-kernel is unique to MAGE; it uses a user specified Minkowski weighting function wherein the seed region of the guide is weighted by some integer more than the tail regions of the guide and candidate off targets.   This emphasizes similarity near the PAM sequence, addressing point 2.  One interesting feature of this weighting is that it is metric independent; different weights can be applied using different weight functions, and the weights can be applied to non-euclidean metrics such as cosine similarity.
+
+The alpha decaying kernel behaves similarly to a Gaussian kernel, however, its decay is much sharper, owing to its powering.  This alpha parameter can thus be tuned within the model (by command line specification) to alter the similarity scoring of off targets. The bandwidth of the kernel is adaptive k-nearest neighbors (the bandwidth for each point is set by the distance to its kth neighbor), with a slight tweak: because the coordinate space of DNA mappings is not unique (points in this space can be duplicate, owing to duplication in the genome), kth-neighbor distances will be 0 for some i, k in large off target libraries. Thus, MAGE uses an adapting adaptive bandwidth, wherein k is incremented until it reaches a non-duplicate kth nearest neighbor distance for duplicate points.  This is a novel technique.  In addition, users may specify their own k to tune the model, however it is sensitive to k near the size of the off target space and will tune accordingly.
+
+To produce a Markov transition matrix, we normalize K by its rows, and this output corresponds to the probability of any sequence in the offtarget space moving to another sequence.  In the light of guide RNAs, we are thus primarily concerned with two qualities of this space:
+1) How does the similarity transition probabilities perform over infinite time? 
+- Rephrased, where does a random walk on the sequence space, starting at the guide RNA, land?
+2) What qualities does the gRNA vector in this kernel exhibit? This is given by the *1*st row/column of the kernel.
+
+Many mathematical methods exist to perform such analyses on Markov transition matrices.  MAGE uses diffusion, a class of methods based on powering the Markov matrix.  A time step to power the markov matrix over is extracted by second derivative optimization of the time step versus the Von Neumann entropy of the Markov Matrix at that time step.  This is performed via eigendecomposition of a symmetric conjugate affinity matrix whose powered eigenvalues correspond to the powered eigenvalues of the transition matrix.  The Von Neumann entropy (VNE) is effectively a measure of the principal eigenvalues of the Markov matrix.  Over long diffusive time, the eigenvalues reduce, and the number of principal eigenvectors follows.  Thus by optimizing t/VNE, we yield a transition matrix with few principal eigenvectors, yet retains the dynamic range of the matrix while behaving similarly to the limit of the matrix as t goes to infinity.  The VNE optimization is output from the model for model tuning, and optionally, users may specify their own t. 
+
+With this diffusion operator, we then convert it into a potential using a -log transformation that is inspired by potential energies found in nature; subsequently, the potentials are converted into potential distances.  We have thus approximated diffusion distances between sequences extracted from the genome, which are then embedded using multidimensional-scaling.  This output is a graphical representation of the diffusion probability between the target sequence and all of the other off target sequences in the genome.
+
+Additional offtarget descriptors are produced using a feature-scaled potential distance matrix.  The first vector of this matrix is the [0,1] scaled diffusion distance, which is mapped onto unit exponential and unit normal distributions to produce binding probabilities based on diffusion distance.  These are output into a csv file, which is a universal format for exchanging table-based data. 
+
+Because the initial filtering of this tool is blunt (Hamming distances), the candidate space can be quite large; this yields computationally intensive matrix operations as well as less meaningful output for the user (as probabilities become more equivalent after normalization due to many components in the vector).  Thus, the software offers the ability to screen out the lowest probability offtargets to reduce this load.
+
+Because of the integrated Minkowski weights and the DNA2Vec representation of the candidate space, MAGE is amenable to future adaptations and modifications that append directly to the feature vectors.  One such modification could be to include ENCODE data in the feature vectors.
+
+A step-wise procedure for MAGE folllows:
 ![alt text](https://github.com/CBB752Spring2017/final-project-2-1-team2-team-2-1-2/blob/master/jayalgorithm.png)
-
-The *de novo* tool developed by Jay accounts for many of the same factors as other publicly available off-target binding prediction tools. Through the Hamming Distance parameter, the number of tolerated mismatched bases can be specified. The chosen value was 7. The increased importance of the PAM proxmial region of the gRNA is also taken into account when searching for homologous genome regions through the Minkowski seed region weighting. While all currently hard-coded, the length (3 nucleotides) and sequence of the PAM site (NGG) can be user defined, as well as the length of the gRNA (20 nucleotides).
-#### Results:
-
 
 ### Pipeline:
 
