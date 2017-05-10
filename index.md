@@ -80,8 +80,8 @@ It is very difficult to include the full range of information discussed above in
 #### Documentation: *De novo* Off-Target Mutation Prediction Tool for SubjectZ
 
 ##### MAGE: Markov Affinity GRNA Extraction
-Amongst the literature concerning CRISPR/Cas off-target binding, few unifying themes have emerged: 
-1) CRISPR off target binding is primarily a function of sequence homology. 
+Amongst the literature concerning CRISPR/Cas off-targeting, few unifying themes have emerged: 
+1) CRISPR off targetting is primarily a function of sequence homology. 
 - Traditional alignment methods do not adequately predict the probability of offtargetting.  
    - Given a set of roughly similar 20-mers (as might be extracted from a naive search for off targets), alignments will not produce adequate dynamic range to quantify their differences.
  - Similarly, more blunt statistics such as Hamming distances yield many false positives, as they are far too sensitive.
@@ -97,7 +97,7 @@ The mapping of distances within the alpha-kernel is unique to MAGE; it uses a us
 
 The alpha decaying kernel behaves similarly to a Gaussian kernel, however, its decay is much sharper, owing to its powering.  This alpha parameter can thus be tuned within the model (by command line specification) to alter the similarity scoring of off targets. The bandwidth of the kernel is adaptive k-nearest neighbors (the bandwidth for each point is set by the distance to its kth neighbor), with a slight tweak: because the coordinate space of DNA mappings is not unique (points in this space can be duplicate, owing to duplication in the genome), kth-neighbor distances will be 0 for some i, k in large off target libraries. Thus, MAGE uses an adapting adaptive bandwidth, wherein k is incremented until it reaches a non-duplicate kth nearest neighbor distance for duplicate points.  This is a novel technique.  In addition, users may specify their own k to tune the model, however it is sensitive to k near the size of the off target space and will tune accordingly.
 
-To produce a Markov transition matrix, we normalize K by its rows, and this output corresponds to the probability of any sequence in the off target space moving to another sequence.  In the light of guide RNAs, we are thus primarily concerned with two qualities of this space:
+To produce a Markov transition matrix, we normalize K by its rows, and this output corresponds to the probability of any sequence in the offtarget space moving to another sequence.  In the light of guide RNAs, we are thus primarily concerned with two qualities of this space:
 1) How does the similarity transition probabilities perform over infinite time? 
 - Rephrased, where does a random walk on the sequence space, starting at the guide RNA, land?
 2) What qualities does the gRNA vector in this kernel exhibit? This is given by the *1*st row/column of the kernel.
@@ -106,7 +106,7 @@ Many mathematical methods exist to perform such analyses on Markov transition ma
 
 With this diffusion operator, we then convert it into a potential using a -log transformation (2). Subsequently, the potentials are converted into potential distances.  We have thus approximated diffusion distances between sequences extracted from the genome.  These distances are embedded using multidimensional-scaling.  This output is a graphical representation of the diffusion probability between the target sequence and all of the other off target sequences in the genome.
 
-Additional off target descriptors are produced using a feature-scaled potential distance matrix.  The first vector of this matrix is the [0,1] scaled diffusion distance, which is mapped onto unit exponential and unit normal distributions to produce binding probabilities based on diffusion distance.  These are output into a csv file, which is a universal format for exchanging table-based data. 
+Additional offtarget descriptors are produced using a feature-scaled potential distance matrix.  The first vector of this matrix is the [0,1] scaled diffusion distance, which is mapped onto unit exponential and unit normal distributions to produce binding probabilities based on diffusion distance.  These are output into a csv file, which is a universal format for exchanging table-based data. 
 
 Because the initial filtering of this tool is blunt (Hamming distances), the candidate space can be quite large; this yields computationally intensive matrix operations as well as less meaningful output for the user (as probabilities become more equivalent after normalization due to many components in the vector).  Thus, the software offers the ability to screen out the lowest probability offtargets to reduce this load.
 
@@ -118,8 +118,34 @@ A step-wise procedure for MAGE folllows:
 
 1. Patrick Ng. "dna2vec: Consistent vector representations of variable-length k-mers". arXiv preprint.	arXiv:1701.06279 [q-bio.QM]
 2. Kevin R. Moon, David van Dijk, Zheng Wang, William Chen, Matthew J Hirn, Ronald R Coifman, Natalia B Ivanova, Guy Wolf, Smita Krishnaswamy. "PHATE: A Dimensionality Reduction Method for Visualizing Trajectory Structures in High-Dimensional Biological Data". bioRxiv preprint. doi: https://doi.org/10.1101/120378
-#### Usage:
 
+#### Usage:
+Dependencies:
+MAGE requires these packages:
+1) Python 3.6
+2) numpy
+3) pandas
+4) scikit-learn
+5) scipy
+6) Biopython
+7) dna2vec (linked in this repository)
+
+To use:
+
+`python3 ./stanley_2_1_2017.py -sgr <FASTA of SGRNA> -gnm <GENOME FASTA> -out <output dir>`
+
+The following parameters are used with MAGE:
+`-hd`: hamming distance for candidate gating - default 5
+`-mk`: minkowski weighting integer - default 15
+`-k`: k nearest neighbor bandwidth - default 50
+`-a`: alpha of alpha decaying kernel - default 5
+`-sd`: second derivative minimum for VNE optimization - default 0.1
+`-t`: override VNE optimization with t - default 0 
+`-trange`: Time steps to optimize over
+`-mds`: MDS embedding - default 0 (no embedding); 2 for nonmetric MDS (slower), 1 for metric mds
+`-vne`: plot VNE  - default 0 (no plot)
+`-num`: amount of sample to include in output, default = num_candidates
+`-cores`: number of cores to use, default is 1, suggested is max
 ### Pipeline:
 
 Here we examine the results of two CRISPR off-target prediction tools,
