@@ -87,6 +87,7 @@ Amongst the literature concerning CRISPR/Cas off-targeting, few unifying themes 
  - Similarly, more blunt statistics such as Hamming distances yield many false positives, as they are far too sensitive.
 2) The degree of sequence homology required for binding varies based on proximity to the PAM sequence
 From these insights, we assert that a new sequence similarity score is necessary to adequately measure guideRNA offtarget probabilities.  Kernel methods lend themselves well as a tool to generate such similarities. 
+MAGE is a multicore diffusion-based method that operates on a candidate space of off target sequences, extracted using Hamming distance gating.
 
 First, in order to generate a vector space to operate on, and to facilitate useage of kernels that are agnostic to the feature space, we map extracted possible off targets into a 500 dimensional space using DNA2Vec, a semantic similarity neural network inspired by Word2Vec. MAGE then uses an alpha-decaying kernel to map sequences into a similarity space. 
 
