@@ -135,17 +135,17 @@ To use:
 `python3 ./stanley_2_1_2017.py -sgr <FASTA of SGRNA> -gnm <GENOME FASTA> -out <output dir>`
 
 The following parameters are used with MAGE:
-`-hd`: hamming distance for candidate gating - default 5
-`-mk`: minkowski weighting integer - default 15
-`-k`: k nearest neighbor bandwidth - default 50
-`-a`: alpha of alpha decaying kernel - default 5
-`-sd`: second derivative minimum for VNE optimization - default 0.1
-`-t`: override VNE optimization with t - default 0 
-`-trange`: Time steps to optimize over
-`-mds`: MDS embedding - default 0 (no embedding); 2 for nonmetric MDS (slower), 1 for metric mds
-`-vne`: plot VNE  - default 0 (no plot)
-`-num`: amount of sample to include in output, default = num_candidates
-`-cores`: number of cores to use, default is 1, suggested is max
+- `-hd`: hamming distance for candidate gating - default 5
+- `-mk`: minkowski weighting integer - default 15
+- `-k`: k nearest neighbor bandwidth - default 50
+- `-a`: alpha of alpha decaying kernel - default 5
+- `-sd`: second derivative minimum for VNE optimization - default 0.1
+- `-t`: override VNE optimization with t - default 0 
+- `-trange`: Time steps to optimize over
+- `-mds`: MDS embedding - default 0 (no embedding); 2 for nonmetric MDS (slower), 1 for metric mds
+- `-vne`: plot VNE  - default 0 (no plot)
+- `-num`: amount of sample to include in output, default = num_candidates
+- `-cores`: number of cores to use, default is 1, suggested is max
 ### Pipeline:
 
 Here we examine the results of two CRISPR off-target prediction tools,
