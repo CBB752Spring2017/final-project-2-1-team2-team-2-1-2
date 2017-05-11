@@ -10,9 +10,12 @@ tagline: Final Project
 
 Table of Contents
 -----------------------
-
-
-
+Table of Contents
+-----------------------
+1. [Introduction](#introduction)
+2. [Writing](#writing)
+3. [Coding](#coding)
+4. [Pipeline](#pipeline)
 
 **Contributors**
  -Writing: Ramya
